@@ -15,11 +15,14 @@ if "current_index" not in st.session_state:
     st.session_state.current_index = 0
 if "status_text" not in st.session_state:
     st.session_state.status_text = ""
+if "recorder_key" not in st.session_state:  # ➕ เพิ่มตัวแปรคีย์สำหรับรีเซ็ตปุ่ม
+    st.session_state.recorder_key = 0
 
 # ฟังก์ชันสำหรับเปลี่ยนคำ
 def next_word():
     st.session_state.current_index = (st.session_state.current_index + 1) % len(words)
     st.session_state.status_text = ""
+    st.session_state.recorder_key += 1  # ➕ เปลี่ยน Key เพื่อบังคับล้างเสียงคำเก่า
 
 # --- ส่วนการแสดงผล GUI ---
 current_word = words[st.session_state.current_index]
@@ -37,7 +40,7 @@ with col1:
         start_prompt="🎙️ กดเพื่อพูด",
         stop_prompt="⏹ กำลังฟัง... (กดเพื่อหยุด)",
         format="wav",  # <-- เพิ่มบรรทัดนี้ลงไปครับ
-        key='recorder'
+        key=f"recorder_{st.session_state.recorder_key}"  # ➕ เปลี่ยน key ตรงนี้
     )
 
 with col2:
