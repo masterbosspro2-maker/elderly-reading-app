@@ -17,12 +17,15 @@ if "status_text" not in st.session_state:
     st.session_state.status_text = ""
 if "recorder_key" not in st.session_state:  # ➕ เพิ่มตัวแปรคีย์สำหรับรีเซ็ตปุ่ม
     st.session_state.recorder_key = 0
+if "last_processed_audio" not in st.session_state:  # ➕ เพิ่มตัวเก็บ ID เสียงที่ประมวลผลแล้ว
+    st.session_state.last_processed_audio = None
 
 # ฟังก์ชันสำหรับเปลี่ยนคำ
 def next_word():
     st.session_state.current_index = (st.session_state.current_index + 1) % len(words)
     st.session_state.status_text = ""
     st.session_state.recorder_key += 1  # ➕ เปลี่ยน Key เพื่อบังคับล้างเสียงคำเก่า
+    st.session_state.last_processed_audio = None  # ➕ รีเซ็ตค่าเมื่อเปลี่ยนคำ
 
 # --- ส่วนการแสดงผล GUI ---
 current_word = words[st.session_state.current_index]
@@ -50,6 +53,15 @@ with col2:
 
 # --- ส่วนประมวลผลเสียง + แสดงสถานะ Realtime ---
 if audio_data is not None:
+    
+    # ➕ ดึง ID หรือ bytes ของเสียงปัจจุบันมาเช็ก
+    current_audio_id = audio_data.get('id', audio_data['bytes'])
+    
+    # ➕ ประมวลผลเฉพาะเมื่อเป็นเสียงใหม่ที่ไม่เคยทำมาก่อนเท่านั้น
+    if st.session_state.last_processed_audio != current_audio_id:
+        # บันทึกว่าเสียงชุดนี้กำลังถูกประมวลผลแล้ว
+        st.session_state.last_processed_audio = current_audio_id
+        
     r = sr.Recognizer()
     r.energy_threshold = 400
     
