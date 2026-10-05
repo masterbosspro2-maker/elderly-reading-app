@@ -1,0 +1,4 @@
+streamlit
+SpeechRecognition
+PyAudio
+streamlit-mic-recorder
