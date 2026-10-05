@@ -37,6 +37,7 @@ with col1:
     audio_data = mic_recorder(
         start_prompt="🎙️ กดเพื่อพูด",
         stop_prompt="⏹️️ กำลังฟัง... (กดเพื่อหยุด)",
+        format="wav",  # <-- เพิ่มบรรทัดนี้ลงไปครับ
         key='recorder'
     )
 
